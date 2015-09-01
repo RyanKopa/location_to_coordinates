@@ -1,0 +1,59 @@
+p=[]#addresses are put in here as a list
+
+import urllib
+import simplejson
+import csv
+
+googleGeocodeUrl = 'http://maps.google.com/maps/api/geocode/json?'
+
+def get_coordinates1(query, from_sensor=False):
+    query = query.encode('utf-8')
+    params = {
+        'address': query,
+        'sensor': "false"
+    }
+    #url = googleGeocodeUrl + urllib.urlencode(params)
+    url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+query+'&key=AIzaSyBsRV8oRpnk-gLDjDH2I19-xOAdPwuItiY'
+    json_response = urllib.urlopen(url)
+    response = simplejson.loads(json_response.read())
+    if response['results']:
+        location = response['results'][0]['geometry']['location']
+        latitude, longitude = location['lat'], location['lng']
+        #print query, latitude, longitude
+    else:
+        latitude, longitude = None, None
+        #print query, "<no results>"
+    return latitude, longitude
+
+def get_coordinates2(query, from_sensor=False):
+    query = query.encode('utf-8')
+    params = {
+        'address': query,
+        'sensor': "false"
+    }
+    #url = googleGeocodeUrl + urllib.urlencode(params)
+    url = 'https://maps.googleapis.com/maps/api/geocode/json?address='+query+'&key=AIzaSyDWS5aDHfXCBWTXufXj6ekpAIF_ouONViQ'
+    json_response = urllib.urlopen(url)
+    response = simplejson.loads(json_response.read())
+    if response['results']:
+        location = response['results'][0]['geometry']['location']
+        latitude, longitude = location['lat'], location['lng']
+        #print query, latitude, longitude
+    else:
+        latitude, longitude = None, None
+        #print query, "<no results>"
+    return longitude
+
+x=[]
+#for a in p:
+#    x.append(get_coordinates(a))
+#print(x)
+
+with open('names2.csv', 'w') as csvfile:
+    fieldnames = ['X', 'Y']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    #print "data is", repr(p)
+    for a in p:
+    	d, c = get_coordinates1(a)
+    	writer.writerow({'X': d, 'Y': c})
